@@ -1,0 +1,7 @@
+# Default owner for every file in the repository
+*                 @dragana1986
+
+# Areas that change production infrastructure or deployments
+/terraform/       @dragana1986
+/scripts/         @dragana1986
+/.github/         @dragana1986
