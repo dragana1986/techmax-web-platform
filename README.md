@@ -61,7 +61,7 @@ flowchart LR
 | CI/CD | GitHub Actions with OIDC authentication to AWS |
 | Code quality and security | `terraform fmt`, `terraform validate`, TFLint, Trivy |
 | Web server | Apache HTTP Server on Amazon Linux |
-| Monitoring | Amazon CloudWatch, Prometheus, Grafana |
+| Monitoring | Amazon CloudWatch (Prometheus and Grafana to be evaluated) |
 
 ---
 
@@ -128,16 +128,16 @@ Rollback is done by reverting the faulty commit through a pull request, or by re
 
 | Stage | Scope | Status |
 |---|---|---|
-| 1 | Git and GitHub: repository, branching, pull requests, versioning | 🟡 In progress (local repository initialized ✅) |
+| 1 | Git and GitHub: repository, branching, pull requests, versioning | 🟡 In progress (repository created and pushed, main protected, secret scanning enabled ✅) |
 | 2 | Terraform bootstrap: S3 remote state, locking, encryption | ⬜ Planned |
 | 3 | Terraform modules and dev, staging, and production environments | ⬜ Planned |
 | 4 | AWS infrastructure: VPC, IAM, security groups, EC2, load balancer, Auto Scaling | ⬜ Planned |
 | 5 | Security and quality: TFLint, Trivy, validation | ⬜ Planned |
 | 6 | CI/CD with GitHub Actions and approvals | ⬜ Planned |
 | 7 | Deployment and recovery: versioning, rollback, blue-green | ⬜ Planned |
-| 8 | DNS, HTTPS, and storage: Route 53, ACM, EBS, EFS | ⬜ Planned |
-| 9 | Containers and GitOps: Docker, EKS, Helm, Argo CD | ⬜ Planned |
-| 10 | Monitoring: CloudWatch, Prometheus, Grafana, alerting | ⬜ Planned |
+| 8 | DNS, HTTPS, and storage: Route 53, ACM, EBS | ⬜ Planned |
+| 9 | Containers: evaluate Docker with ECS or EKS | ⬜ To be evaluated |
+|| 10 | Monitoring: CloudWatch dashboards, alarms, and logs (Prometheus and Grafana to be evaluated) | ⬜ Planned |
 | 11 | Production readiness: scaling, backups, disaster recovery, cost | ⬜ Planned |
 
 ---
