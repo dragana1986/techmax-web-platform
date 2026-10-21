@@ -1,0 +1,33 @@
+# Terraform (from GitHub's Terraform.gitignore template)
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+!example.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Terraform plan files (added for this project)
+*.tfplan
+
+# Secrets and keys
+*.pem
+*.key
+.env
+.env.*
+
+# Release packages (built by the pipeline and stored in S3)
+*.zip
+
+# Operating system and editor files
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

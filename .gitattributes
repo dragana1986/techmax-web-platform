@@ -1,0 +1,17 @@
+# Normalize text files, and let Git detect binary files automatically
+* text=auto
+
+# Files that run or are read on Linux must always use LF
+*.sh     text eol=lf
+*.tf     text eol=lf
+*.tfvars text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+
+# Binary files: never convert or compare line by line
+*.jpg    binary
+*.png    binary
+*.eot    binary
+*.ttf    binary
+*.woff   binary
+*.woff2  binary
