@@ -2,7 +2,7 @@
 
 Highly available AWS infrastructure for the TechMax web application, provisioned with Terraform and deployed through GitHub Actions.
 
-> **Project status:** In progress. Stage 1 (Git and GitHub) is underway. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
+> **Project status:** In progress. Stage 1 (Git and GitHub) and Stage 2 (Terraform bootstrap) are complete, and Stage 3 (Terraform modules and environments) is next. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
 
 ---
 
@@ -75,7 +75,8 @@ techmax-web-platform/
 │   └── deploy.sh         # EC2 bootstrap script: installs Apache and deploys the release from S3
 ├── docs/
 │   └── reference-architecture.png
-├── terraform/            # Infrastructure as Code (added in Stage 2)
+├── terraform/            # Infrastructure as Code
+│   └── bootstrap/        # S3 remote state bucket and backend configuration
 └── README.md
 ```
 
@@ -128,8 +129,8 @@ Rollback is done by reverting the faulty commit through a pull request, or by re
 
 | Stage | Scope | Status |
 |---|---|---|
-| 1 | Git and GitHub: repository, branching, pull requests, versioning | 🟡 In progress (repository created and pushed, main protected, secret scanning enabled ✅) |
-| 2 | Terraform bootstrap: S3 remote state, locking, encryption | ⬜ Planned |
+| 1 | Git and GitHub: repository, branching, pull requests, versioning | ✅ Complete |
+| 2 | Terraform bootstrap: S3 remote state, locking, encryption | ✅ Complete |
 | 3 | Terraform modules and dev, staging, and production environments | ⬜ Planned |
 | 4 | AWS infrastructure: VPC, IAM, security groups, EC2, load balancer, Auto Scaling | ⬜ Planned |
 | 5 | Security and quality: TFLint, Trivy, validation | ⬜ Planned |
@@ -137,7 +138,7 @@ Rollback is done by reverting the faulty commit through a pull request, or by re
 | 7 | Deployment and recovery: versioning, rollback, blue-green | ⬜ Planned |
 | 8 | DNS, HTTPS, and storage: Route 53, ACM, EBS | ⬜ Planned |
 | 9 | Containers: evaluate Docker with ECS or EKS | ⬜ To be evaluated |
-|| 10 | Monitoring: CloudWatch dashboards, alarms, and logs (Prometheus and Grafana to be evaluated) | ⬜ Planned |
+| 10 | Monitoring: CloudWatch dashboards, alarms, and logs (Prometheus and Grafana to be evaluated) | ⬜ Planned |
 | 11 | Production readiness: scaling, backups, disaster recovery, cost | ⬜ Planned |
 
 ---
