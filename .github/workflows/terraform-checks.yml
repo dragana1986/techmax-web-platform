@@ -1,0 +1,65 @@
+name: terraform-checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+
+jobs:
+  fmt-validate:
+    name: Terraform Fmt and Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4.0.1
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      - name: Validate every module
+        run: |
+          for dir in $(find . -name "*.tf" -not -path "*/.terraform/*" -exec dirname {} \; | sort -u); do
+
+            echo "Validating module in $dir"
+            terraform -chdir="$dir" init -backend=false -input=false
+            terraform -chdir="$dir" validate
+          done
+  tflint:
+    name: tflint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up TFlint
+        uses: terraform-linters/setup-tflint@v6.3.2
+
+      - name: Initialize TFlint plugins
+        run: tflint --init
+        env: 
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run TFlint
+        run: tflint --recursive --config "$(pwd)/.tflint.hcl" --format compact
+
+  trivy:
+    name: Trivy Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Scan Terraform for security issues
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #v0.36.0
+        with:
+          scan-type: config
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"

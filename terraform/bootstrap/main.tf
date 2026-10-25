@@ -19,7 +19,10 @@ resource "aws_s3_bucket_versioning" "state" {
     status = "Enabled"
   }
 }
-
+# Accepted risk, reviewed in the pull request: the state bucket uses SSE-S3 (AWS-managed keys),
+# which meets our requirements at no extra cost. Switch to SSE-KMS if key-level audit is required.
+#trivy:ignore:AVD-AWS-0132:exp:2027-04-25
+#trivy:ignore:AWS-0132:exp:2027-04-25
 resource "aws_s3_bucket_server_side_encryption_configuration" "state" {
   bucket = aws_s3_bucket.state.id
 
@@ -98,3 +101,4 @@ resource "aws_s3_bucket_lifecycle_configuration" "state" {
 
   depends_on = [aws_s3_bucket_versioning.state]
 }
+
