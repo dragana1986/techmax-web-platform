@@ -2,7 +2,7 @@
 
 Highly available AWS infrastructure for the TechMax web application, provisioned with Terraform and deployed through GitHub Actions.
 
-> **Project status:** In progress. Stage 1 (Git and GitHub) and Stage 2 (Terraform bootstrap) are complete, and Stage 3 (Terraform modules and environments) is next. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
+> **Project status:** In progress. Stage 1 (Git and GitHub) and Stage 2 (Terraform bootstrap) are complete. Stage 3 is in progress: the shared VPC module is released as `v1.0.0` in [platform-terraform-modules](https://github.com/dragana1986/platform-terraform-modules), and the development environment is built from it. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
 
 ---
 
@@ -57,7 +57,7 @@ flowchart LR
 | Area | Tools |
 |---|---|
 | Version control | Git, GitHub (trunk-based development, protected `main` branch) |
-| Infrastructure as Code | Terraform (remote state in S3 with state locking) |
+| Infrastructure as Code | Terraform (remote state in S3 with state locking; shared modules from a separate, versioned repository) |
 | CI/CD | GitHub Actions with OIDC authentication to AWS |
 | Code quality and security | `terraform fmt`, `terraform validate`, TFLint, Trivy |
 | Web server | Apache HTTP Server on Amazon Linux |
@@ -76,19 +76,46 @@ techmax-web-platform/
 ├── docs/
 │   └── reference-architecture.png
 ├── terraform/            # Infrastructure as Code
-│   └── bootstrap/        # S3 remote state bucket and backend configuration
+│   ├── bootstrap/        # S3 remote state bucket and backend configuration
+│   └── environments/
+│       └── dev/          # Development environment, built from the shared VPC module (v1.0.0)
 └── README.md
 ```
+
+## Terraform modules
+
+The infrastructure is built from reusable modules that live in a separate repository, [platform-terraform-modules](https://github.com/dragana1986/platform-terraform-modules). The modules are shared with other projects, so they have their own pull requests, automated checks (format, validate, TFLint, and Trivy), and protected release tags.
+
+Each environment references a module by its released version tag, never by a branch:
+
+```hcl
+module "vpc" {
+  source = "git::ssh://git@github.com/dragana1986/platform-terraform-modules.git//vpc?ref=v1.0.0"
+
+  name       = local.name
+  cidr_block = local.cidr_block
+}
+```
+
+| Module | Version used | Used by |
+|---|---|---|
+| `vpc` | `v1.0.0` | Development |
+
+**Upgrading a module:** change the `ref` tag in one environment through a pull request, review the plan, and apply. Environments are upgraded in order: development, then staging, then production.
+
+---
 
 ---
 
 ## Environments
 
-| Environment | Purpose | NAT Gateways | Deployment approval |
-|---|---|---|---|
-| Development | Testing changes | 1 (cost-optimized) | Automatic |
-| Staging | Pre-production validation | 2 | Automatic |
-| Production | Live traffic | 2 (one per Availability Zone) | Manual approval required |
+| Environment | Purpose | VPC CIDR | State key | NAT Gateways | Deployment approval | Status |
+|---|---|---|---|---|---|---|
+| Development | Testing changes | `10.10.0.0/16` | `dev/terraform.tfstate` | 1 (cost-optimized) | Automatic | ✅ VPC built |
+| Staging | Pre-production validation | `10.20.0.0/16` | `staging/terraform.tfstate` | 2 | Automatic | ⬜ Planned |
+| Production | Live traffic | `10.30.0.0/16` | `prod/terraform.tfstate` | 2 (one per Availability Zone) | Manual approval required | ⬜ Planned |
+
+Each environment has its own folder under `terraform/environments/`, its own state file and lock in the shared state bucket, and a non-overlapping CIDR block from the environment IP plan.
 
 ---
 
@@ -131,10 +158,10 @@ Rollback is done by reverting the faulty commit through a pull request, or by re
 |---|---|---|
 | 1 | Git and GitHub: repository, branching, pull requests, versioning | ✅ Complete |
 | 2 | Terraform bootstrap: S3 remote state, locking, encryption | ✅ Complete |
-| 3 | Terraform modules and dev, staging, and production environments | ⬜ Planned |
-| 4 | AWS infrastructure: VPC, IAM, security groups, EC2, load balancer, Auto Scaling | ⬜ Planned |
-| 5 | Security and quality: TFLint, Trivy, validation | ⬜ Planned |
-| 6 | CI/CD with GitHub Actions and approvals | ⬜ Planned |
+| 3 | Terraform modules and dev, staging, and production environments | 🟡 In progress: VPC module `v1.0.0` released, development environment built; staging and production follow once the pipeline is in place |
+| 4 | Security and quality: `terraform fmt`, `validate`, TFLint, Trivy as required checks | 🟡 In progress: required checks run in the modules repository; application repository next |
+| 5 | CI/CD with GitHub Actions: OIDC authentication, plan on every pull request, apply with approvals | ⬜ Planned |
+| 6 | AWS infrastructure: subnets, route tables, Internet and NAT Gateways, IAM, security groups, EC2, load balancer, Auto Scaling | ⬜ Planned |
 | 7 | Deployment and recovery: versioning, rollback, blue-green | ⬜ Planned |
 | 8 | DNS, HTTPS, and storage: Route 53, ACM, EBS | ⬜ Planned |
 | 9 | Containers: evaluate Docker with ECS or EKS | ⬜ To be evaluated |
