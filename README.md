@@ -2,7 +2,7 @@
 
 Highly available AWS infrastructure for the TechMax web application, provisioned with Terraform and deployed through GitHub Actions.
 
-> **Project status:** In progress. Stage 1 (Git and GitHub) and Stage 2 (Terraform bootstrap) are complete. Stage 3 is in progress: the shared VPC module is released as `v1.0.0` in [platform-terraform-modules](https://github.com/dragana1986/platform-terraform-modules), and the development environment is built from it. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
+> **Project status:** In progress. Stage 1 (Git and GitHub), Stage 2 (Terraform bootstrap), and Stage 4 (security and quality checks) are complete. Stage 3 is in progress: the shared VPC module is released as `v1.0.0` in [platform-terraform-modules](https://github.com/dragana1986/platform-terraform-modules), and the development environment is built from it. Completed work is marked ✅ in the [Roadmap](#roadmap). Everything else describes the target design.
 
 ---
 
@@ -159,7 +159,7 @@ Rollback is done by reverting the faulty commit through a pull request, or by re
 | 1 | Git and GitHub: repository, branching, pull requests, versioning | ✅ Complete |
 | 2 | Terraform bootstrap: S3 remote state, locking, encryption | ✅ Complete |
 | 3 | Terraform modules and dev, staging, and production environments | 🟡 In progress: VPC module `v1.0.0` released, development environment built; staging and production follow once the pipeline is in place |
-| 4 | Security and quality: `terraform fmt`, `validate`, TFLint, Trivy as required checks | 🟡 In progress: required checks run in the modules repository; application repository next |
+| 4 | Security and quality: `terraform fmt`, `validate`, TFLint, Trivy as required checks | ✅ Complete: required checks run on every pull request in both repositories |
 | 5 | CI/CD with GitHub Actions: OIDC authentication, plan on every pull request, apply with approvals | ⬜ Planned |
 | 6 | AWS infrastructure: subnets, route tables, Internet and NAT Gateways, IAM, security groups, EC2, load balancer, Auto Scaling | ⬜ Planned |
 | 7 | Deployment and recovery: versioning, rollback, blue-green | ⬜ Planned |
