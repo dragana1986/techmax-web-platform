@@ -1,0 +1,44 @@
+name: terraform-plan
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan-dev:
+    name: Terraform Plan (dev)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          role-session-name: techmax-plan-${{ github.run_id }}
+          aws-region: us-east-1
+
+      - name: Show the AWS identity
+        run: aws sts get-caller-identity
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4.0.1
+
+      - name: Load the modules deploy key
+        uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.MODULES_DEPLOY_KEY }}
+
+      - name: Initialize Terraform
+        working-directory: terraform/environments/dev
+        run: terraform init -input=false
+
+      - name: Terraform Plan
+        working-directory: terraform/environments/dev
+        run: terraform plan -input=false -lock-timeout=120s
