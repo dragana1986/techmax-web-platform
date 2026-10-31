@@ -8,5 +8,4 @@ provider "aws" {
       ManagedBy   = "terraform"
     }
   }
-
 }
