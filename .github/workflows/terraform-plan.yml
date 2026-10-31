@@ -1,0 +1,32 @@
+name: terraform-plan
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan-dev:
+    name: Terraform Plan (dev)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          role-session-name: techmax-plan-${{ github.run_id }}
+          aws-region: us-east-1
+
+      - name: Show the AWS identity
+        run: aws sts get-caller-identity
+        
+
+
+    
