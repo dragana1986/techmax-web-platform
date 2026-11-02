@@ -57,10 +57,24 @@ data "aws_iam_policy_document" "plan_permissions" {
   }
 
   statement {
+    sid       = "ReadProdState"
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["${local.state_bucket_arn}/prod/terraform.tfstate"]
+  }
+
+  statement {
     sid       = "ManageDevStateLock"
     effect    = "Allow"
     actions   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
     resources = ["${local.state_bucket_arn}/dev/terraform.tfstate.tflock"]
+  }
+
+  statement {
+    sid       = "ManageProdStateLock"
+    effect    = "Allow"
+    actions   = ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"]
+    resources = ["${local.state_bucket_arn}/prod/terraform.tfstate.tflock"]
   }
 
   statement {
