@@ -189,6 +189,58 @@ data "aws_iam_policy_document" "apply_permissions" {
       values   = ["CreateVpc"]
     }
   }
+
+  statement {
+    sid       = "CreateDevSubnet"
+    effect    = "Allow"
+    actions   = ["ec2:CreateSubnet"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "CreateDevSubnetInDevVpc"
+    effect    = "Allow"
+    actions   = ["ec2:CreateSubnet"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:vpc/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "TagDevSubnetOnCreate"
+    effect    = "Allow"
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateSubnet"]
+    }
+  }
+
+  statement {
+    sid       = "ManageDevSubnet"
+    effect    = "Allow"
+    actions   = ["ec2:ModifySubnetAttribute", "ec2:CreateTags", "ec2:DeleteTags", "ec2:DeleteSubnet"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
 }
 
 resource "aws_iam_role_policy" "apply" {
