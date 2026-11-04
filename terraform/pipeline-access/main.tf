@@ -225,7 +225,7 @@ data "aws_iam_policy_document" "apply_permissions" {
     condition {
       test     = "StringEquals"
       variable = "ec2:CreateAction"
-      values = ["CreateSubnet"]
+      values   = ["CreateSubnet"]
     }
   }
 
