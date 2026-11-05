@@ -241,7 +241,223 @@ data "aws_iam_policy_document" "apply_permissions" {
       values   = ["dev"]
     }
   }
+
+  statement {
+    sid       = "CreateDevInternetGateway"
+    effect    = "Allow"
+    actions   = ["ec2:CreateInternetGateway"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:internet-gateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid     = "AttachDevInternetGatewayToVpc"
+    effect  = "Allow"
+    actions = ["ec2:AttachInternetGateway", "ec2:DetachInternetGateway"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:internet-gateway/*",
+    "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:vpc/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "TagDevInternetGatewayOnCreate"
+    effect    = "Allow"
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:internet-gateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateInternetGateway"]
+    }
+  }
+
+  statement {
+    sid       = "ManageDevInternetGateway"
+    effect    = "Allow"
+    actions   = ["ec2:DeleteInternetGateway", "ec2:CreateTags", "ec2:DeleteTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:internet-gateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "CreateDevRouteTable"
+    effect    = "Allow"
+    actions   = ["ec2:CreateRouteTable"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:route-table/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "CreateDevRouteTableInDevVpc"
+    effect    = "Allow"
+    actions   = ["ec2:CreateRouteTable"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:vpc/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "TagDevRouteTable"
+    effect    = "Allow"
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:route-table/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateRouteTable"]
+    }
+  }
+
+  statement {
+    sid     = "RouteTableAssociationDev"
+    effect  = "Allow"
+    actions = ["ec2:AssociateRouteTable", "ec2:DisassociateRouteTable"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:route-table/*",
+    "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "ManageDevRouteTable"
+    effect    = "Allow"
+    actions   = ["ec2:CreateRoute", "ec2:DeleteRouteTable", "ec2:DeleteRoute", "ec2:ReplaceRoute", "ec2:CreateTags", "ec2:DeleteTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:route-table/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "AllocateDevElasticIp"
+    effect    = "Allow"
+    actions   = ["ec2:AllocateAddress"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "TagDevElasticIpOnCreate"
+    effect    = "Allow"
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["AllocateAddress"]
+    }
+  }
+
+  statement {
+    sid       = "ManageDevElasticIp"
+    effect    = "Allow"
+    actions   = ["ec2:ReleaseAddress", "ec2:CreateTags", "ec2:DeleteTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "CreateDevNatGateway"
+    effect    = "Allow"
+    actions   = ["ec2:CreateNatGateway"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:natgateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid     = "CreateDevNatGatewayInDevNetwork"
+    effect  = "Allow"
+    actions = ["ec2:CreateNatGateway"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/*",
+    "arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:subnet/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
+
+  statement {
+    sid       = "TagDevNatGatewayOnCreate"
+    effect    = "Allow"
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:natgateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateNatGateway"]
+    }
+  }
+
+  statement {
+    sid       = "ManageDevNatGateway"
+    effect    = "Allow"
+    actions   = ["ec2:DeleteNatGateway", "ec2:CreateTags", "ec2:DeleteTags"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:natgateway/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/Environment"
+      values   = ["dev"]
+    }
+  }
 }
+
+
+
+
+
 
 resource "aws_iam_role_policy" "apply" {
   name   = "techmax-github-actions-apply-permissions"
@@ -273,7 +489,6 @@ data "aws_iam_policy_document" "apply_prod_role_trust" {
     }
   }
 }
-
 resource "aws_iam_role" "apply_prod" {
   name               = "techmax-github-actions-apply-prod"
   description        = "Assumed by GitHub Actions in the prod environment to run terraform apply"
