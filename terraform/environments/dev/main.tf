@@ -6,7 +6,7 @@ locals {
   public_subnet_cidrs      = ["10.10.1.0/24", "10.10.2.0/24"]
   private_app_subnet_cidrs = ["10.10.10.0/24", "10.10.11.0/24"]
 
-  nat_gateway_mode = "single"
+  nat_gateway_mode = "none"
 }
 
 
