@@ -390,7 +390,7 @@ data "aws_iam_policy_document" "apply_permissions" {
   statement {
     sid       = "ManageDevElasticIp"
     effect    = "Allow"
-    actions   = ["ec2:ReleaseAddress", "ec2:CreateTags", "ec2:DeleteTags"]
+    actions   = ["ec2:ReleaseAddress", "ec2:DisassociateAddress", "ec2:CreateTags", "ec2:DeleteTags"]
     resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:elastic-ip/*"]
 
     condition {
@@ -398,6 +398,13 @@ data "aws_iam_policy_document" "apply_permissions" {
       variable = "aws:ResourceTag/Environment"
       values   = ["dev"]
     }
+  }
+
+  statement {
+    sid       = "DisassociateDevElasticIpFromInterface"
+    effect    = "Allow"
+    actions   = ["ec2:DisassociateAddress"]
+    resources = ["arn:aws:ec2:${var.aws_region}:${data.aws_caller_identity.current.account_id}:network-interface/*"]
   }
 
   statement {
