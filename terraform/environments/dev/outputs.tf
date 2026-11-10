@@ -52,3 +52,13 @@ output "private_app_route_table_ids" {
   description = "The IDs of the private application route tables, in the same order as the availability zones. Used to attach VPC gateway endpoints"
   value       = module.vpc.private_app_route_table_ids
 }
+
+output "alb_dns_name" {
+  description = "The DNS name of the Application Load Balancer. Open http://<this value> to reach the website"
+  value       = module.alb.dns_name
+}
+
+output "auto_scaling_group_name" {
+  description = "The name of the Auto Scaling group that runs the application servers. Used to find the servers and to start an instance refresh"
+  value       = module.auto_scaling_group.auto_scaling_group_name
+}
